@@ -26,7 +26,7 @@ export default function Page({ params }) {
   const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [totals, setTotals] = useState({});
   const [searchedAmount, setSearchedAmount] = useState("");
-  const [fromDate, setFromDate] = useState(new Date(2023, 9, 1));
+  const [fromDate, setFromDate] = useState(new Date(2023, 10, 1));
   const [toDate, setToDate] = useState(new Date());
   const router = useRouter();
 
@@ -110,17 +110,57 @@ export default function Page({ params }) {
     return matchingTransaction;
   };
 
+  const addOneDayToDate = (date) => {
+    var tempDate = new Date(date);
+    tempDate.setDate(date.getDate() + 1);
+
+    return tempDate;
+  };
+
   const handleApplyFilter = () => {
-    console.log(fromDate);
-    console.log(toDate);
+    setIsDataLoading(true);
+
+    const value = JSON.parse(localStorage.getItem("DelightLoginDetails"));
+    const req = {
+      userName: value.userName,
+      password: value.password,
+      fromDate: addOneDayToDate(fromDate),
+      toDate: addOneDayToDate(toDate),
+    };
+    fetch(
+      "https://backend-online.onrender.com/checkUserAndGetTransactionDataByDates",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(req),
+      }
+    )
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.isError) {
+          throw response.ErrorMessege;
+        } else {
+          setAllTransactions(response.data.allTransactions);
+          setFilteredTransactions(response.data.allTransactions);
+          setTotals(response.data.totals);
+          setIsDataLoading(false);
+        }
+      })
+      .catch((error) => {
+        setErrorMessage(error.toString());
+        setShowToast(true);
+        setIsDataLoading(false);
+      });
   };
 
   return (
     <>
-      <div className="h-full w-full flex flex-col items-center">
+      <div className="h-full w-full flex flex-col items-center overflow-hidden">
         {!isLoading && (
           <Navbar fluid rounded className="w-full px-5">
-            <div className="flex flex-row items-center dark:text-white">
+            <div className="flex flex-row items-center text-sm md:text-base dark:text-white">
               <IoPersonCircle size={30} />
               &nbsp; {userData.name}
               &nbsp;
@@ -182,7 +222,7 @@ export default function Page({ params }) {
         )}
 
         {!isLoading && (
-          <div class="mt-5 px-2 flex w-full flex-col md:flex-row dark:text-white">
+          <div class="mt-3 px-2 flex w-full flex-col md:flex-row dark:text-white">
             <div class="w-full md:w-1/3">
               <TextInput
                 value={searchedAmount}
@@ -194,7 +234,7 @@ export default function Page({ params }) {
                 placeholder="Search by amount"
               />
             </div>
-            <div class="flex flex-row w-full mt-5 md:w-2/3 md:mt-0">
+            <div class="flex flex-row w-full mt-3 md:w-2/3 md:mt-0">
               <div class="basis-2/5 md:pl-2">
                 <Datepicker
                   defaultDate={fromDate}
@@ -217,6 +257,7 @@ export default function Page({ params }) {
                   onClick={() => handleApplyFilter()}
                   className="w-full font-bold"
                   color="light"
+                  isProcessing={isDataLoading}
                 >
                   Apply
                 </Button>
@@ -226,10 +267,7 @@ export default function Page({ params }) {
         )}
 
         {!isLoading && (
-          <div
-            className="text-right mt-5 px-2 w-full flex flex-row text-gray-700 dark:text-gray-300"
-            style={{ fontSize: 13 }}
-          >
+          <div className="text-right mt-3 px-2 w-full flex flex-row text-gray-700 text-xs md:text-base dark:text-gray-300">
             <div className="text-center" style={{ width: "35%" }}>
               Total Transactions
               <br />
@@ -237,21 +275,21 @@ export default function Page({ params }) {
             </div>
             <div style={{ width: "21%" }}>
               Comission
-              <br />
+              <br />₹{" "}
               {totals.totalComission.toLocaleString(undefined, {
                 maximumFractionDigits: 2,
               })}
             </div>
             <div style={{ width: "22%" }}>
               Received
-              <br />
+              <br />₹{" "}
               {totals.totalGot.toLocaleString(undefined, {
                 maximumFractionDigits: 2,
               })}
             </div>
             <div style={{ width: "22%" }}>
               Paid
-              <br />
+              <br />₹{" "}
               {totals.totalGave.toLocaleString(undefined, {
                 maximumFractionDigits: 2,
               })}
@@ -260,7 +298,7 @@ export default function Page({ params }) {
         )}
 
         {!isDataLoading && allTransactions.length > 0 && (
-          <div style={{ maxHeight: "80%" }} className="mt-5 px-2 h-full w-full">
+          <div style={{ maxHeight: "90%" }} className="mt-3 px-2 h-full w-full">
             <TransactionsList
               items={filteredTransactions}
               itemHeight={100}
@@ -272,7 +310,7 @@ export default function Page({ params }) {
           <div
             role="status"
             style={{ width: "100%" }}
-            className="mt-5 p-4 space-y-4 border border-gray-200 divide-y divide-gray-200 rounded shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700"
+            className="mt-3 p-4 space-y-4 border border-gray-200 divide-y divide-gray-200 rounded shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700"
           >
             <div
               style={{ height: 100 }}

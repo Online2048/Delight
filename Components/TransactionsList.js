@@ -41,7 +41,7 @@ function TransactionsList({ items, itemHeight, containerHeight }) {
               }}
             >
               <div
-                className="w-full flex flex-row items-center text-gray-700 dark:text-gray-300"
+                className="w-full flex flex-row items-center text-gray-700 text-sm md:text-base dark:text-gray-300"
                 style={{ height: "100%" }}
               >
                 <div style={{ width: "41%" }}>
@@ -76,7 +76,7 @@ function TransactionsList({ items, itemHeight, containerHeight }) {
                 </div>
                 <div
                   className="text-right text-green-500 font-bold"
-                  style={{ width: "22%"}}
+                  style={{ width: "22%" }}
                 >
                   {!item.gave
                     ? `₹ ${item.originalAmount.toLocaleString(undefined, {
@@ -86,7 +86,7 @@ function TransactionsList({ items, itemHeight, containerHeight }) {
                 </div>
                 <div
                   className="text-right text-red-500 font-bold"
-                  style={{ width: "22%"}}
+                  style={{ width: "22%" }}
                 >
                   {item.gave
                     ? `₹ ${item.originalAmount.toLocaleString(undefined, {
@@ -97,6 +97,7 @@ function TransactionsList({ items, itemHeight, containerHeight }) {
               </div>
             </div>
           ))}
+          <div style={{ height: 300, width: "100%" }}></div>
         </div>
         <div style={{ height: `${invisibleItemsHeight}px` }} />
       </div>
