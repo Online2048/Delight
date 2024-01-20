@@ -46,7 +46,7 @@ function TransactionsList({ items, itemHeight, containerHeight }) {
               >
                 <div style={{ width: "41%" }}>
                   <h6 className="font-bold">
-                    {new Date(item.addedOn).toLocaleDateString("en-Us", {
+                    {new Date(item.addedOn).toLocaleDateString("en-GB", {
                       year: "numeric",
                       month: "numeric",
                       day: "numeric",

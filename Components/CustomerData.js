@@ -26,7 +26,7 @@ export default function CustomerData({ params }) {
   const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [totals, setTotals] = useState({});
   const [searchedAmount, setSearchedAmount] = useState("");
-  const [fromDate, setFromDate] = useState(new Date(2023, 10, 1));
+  const [fromDate, setFromDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
   const [toDate, setToDate] = useState(new Date());
   const router = useRouter();
 
