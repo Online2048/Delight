@@ -4,11 +4,7 @@ export async function generateStaticParams() {
   const posts = await fetch(
     "https://backend-online.onrender.com/getDynamicRoutesOfUserName",
     {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({}),
+      method: "GET"
     }
   ).then((res) => res.json());
 
